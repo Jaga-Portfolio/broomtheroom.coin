@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Lost Coin – Luke 15</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,7 +17,7 @@ background:#000;
 font-family:Georgia,serif;
 }
 
-/* broom pointer */
+/* broom */
 
 #pointer{
 position:fixed;
@@ -36,26 +37,26 @@ left:50%;
 transform:translate(-50%,-50%);
 background:#000;
 color:#ffd700;
-padding:18px;
+padding:16px;
 border-radius:10px;
 text-align:center;
-font-size:1.05rem;
+font-size:1rem;
 z-index:2000;
-width:min(85%,360px);
+width:min(85%,340px);
 }
 
-/* instruction toast */
+/* instruction */
 
 #instruction{
 position:fixed;
-top:18px;
+top:15px;
 left:50%;
 transform:translateX(-50%);
 background:rgba(0,0,0,0.8);
 color:#ffd700;
-padding:6px 14px;
-border-radius:18px;
-font-size:.9rem;
+padding:5px 14px;
+border-radius:16px;
+font-size:.85rem;
 opacity:0;
 transition:.4s;
 z-index:1500;
@@ -65,35 +66,35 @@ z-index:1500;
 
 #topArea{
 position:absolute;
-top:6vh;
+top:7vh;
 left:0;
 width:100%;
-min-height:30vh;
+height:26vh;
 background:white;
 display:flex;
 align-items:center;
 justify-content:center;
-padding:20px;
+padding:15px;
 text-align:center;
 opacity:0;
-transition:opacity .6s;
+transition:opacity .5s;
 }
 
 .verseBox{
 max-width:720px;
 width:90%;
-font-size:clamp(1rem,2.4vw,1.35rem);
+font-size:clamp(.95rem,2.5vw,1.3rem);
 line-height:1.6;
 }
 
-/* dusty floor */
+/* floor */
 
 #floor{
 position:absolute;
-bottom:0;
+top:33vh;
 width:100%;
-height:68vh;
-background:#111;
+height:67vh;
+background:#0a0a0a;
 display:none;
 overflow:hidden;
 }
@@ -121,8 +122,8 @@ opacity:0;
 
 #coin.found{
 opacity:1;
-box-shadow:0 0 40px gold,0 0 90px gold;
-transform:scale(1.5);
+box-shadow:0 0 40px gold,0 0 80px gold;
+transform:scale(1.4);
 transition:.4s;
 }
 
@@ -149,7 +150,7 @@ opacity:.9;
 }
 
 @keyframes cloudMove{
-from{transform:translateX(-220px)}
+from{transform:translateX(-200px)}
 to{transform:translateX(110vw)}
 }
 
@@ -157,42 +158,35 @@ to{transform:translateX(110vw)}
 
 #bottomVerse{
 position:absolute;
-bottom:16%;
+bottom:20%;
 left:50%;
 transform:translateX(-50%);
 width:min(85%,640px);
 text-align:center;
-font-size:clamp(1.1rem,2.6vw,1.6rem);
+font-size:clamp(1.1rem,2.5vw,1.6rem);
 font-weight:bold;
 line-height:1.6;
 color:#222;
 opacity:0;
-transition:.8s;
+transition:.7s;
 }
 
-/* tablets */
+/* MOBILE FIXES */
 
-@media (max-width:768px){
-#floor{height:72vh;}
-#topArea{top:8vh;}
+@media(max-width:480px){
+
+#topArea{
+top:9vh;
+height:25vh;
 }
 
-/* phones */
-
-@media (max-width:480px){
+#floor{
+top:34vh;
+}
 
 #popup{
 top:45%;
 font-size:.95rem;
-}
-
-.verseBox{
-font-size:1.05rem;
-}
-
-#bottomVerse{
-bottom:20%;
-font-size:1.2rem;
 }
 
 }
@@ -220,7 +214,6 @@ Help a woman who lost her coin find it.<br><br>
 </div>
 
 <div id="heaven"></div>
-
 <div id="bottomVerse"></div>
 
 <script>
@@ -235,47 +228,37 @@ const heaven=document.getElementById("heaven")
 const bottomVerse=document.getElementById("bottomVerse")
 const instruction=document.getElementById("instruction")
 
-let phase=0
 let found=false
 let mouseX=0
 let mouseY=0
 
-const SWEEP_RADIUS = 65
-const COIN_RADIUS = 40
+const SWEEP_RADIUS=70
+const COIN_RADIUS=45
 
 function showInstruction(msg){
-
 instruction.innerText=msg
 instruction.style.opacity=1
-
-setTimeout(()=>{
-instruction.style.opacity=0
-},3000)
-
+setTimeout(()=>{instruction.style.opacity=0},2500)
 }
 
-/* pointer tracking */
+/* pointer movement */
 
 function updatePointer(x,y){
 
 mouseX=x
 mouseY=y
 
-if(pointer.style.display!=="none"){
 pointer.style.left=x+"px"
 pointer.style.top=y+"px"
-}
 
-if(phase!==1) return
+if(!floor.style.display) return
 
 sweepDust()
 detectCoin()
 
 }
 
-window.addEventListener("pointermove",(e)=>{
-updatePointer(e.clientX,e.clientY)
-})
+window.addEventListener("pointermove",(e)=>updatePointer(e.clientX,e.clientY))
 
 window.addEventListener("touchmove",(e)=>{
 let t=e.touches[0]
@@ -295,8 +278,6 @@ generateDust()
 placeCoin()
 
 showInstruction("Sweep the dusty floor to find the lost coin.")
-
-phase=1
 
 }
 
@@ -333,10 +314,10 @@ if(dist<SWEEP_RADIUS){
 
 let x=parseFloat(d.style.left)
 
-if(rect.left < window.innerWidth/2)
-d.style.left=(x-14)+"px"
+if(rect.left<window.innerWidth/2)
+d.style.left=(x-15)+"px"
 else
-d.style.left=(x+14)+"px"
+d.style.left=(x+15)+"px"
 
 }
 
@@ -344,11 +325,11 @@ d.style.left=(x+14)+"px"
 
 }
 
-/* coin */
+/* coin placement */
 
 function placeCoin(){
 
-const padding=30
+const padding=40
 
 let x=Math.random()*(floor.offsetWidth-padding*2)+padding
 let y=Math.random()*(floor.offsetHeight-padding*2)+padding
@@ -395,9 +376,7 @@ She gathers her friends and neighbors and celebrates:<br>
 
 topArea.style.opacity=1
 
-setTimeout(()=>{
-heavenScene()
-},5000)
+setTimeout(()=>heavenScene(),5000)
 
 }
 
@@ -419,28 +398,25 @@ bottomVerse.innerHTML=
 
 bottomVerse.style.opacity=1
 
-},1200)
+},1000)
 
 }
-
-/* clouds */
 
 function spawnClouds(){
 
 for(let i=0;i<5;i++){
 
 let c=document.createElement("div")
+
 c.className="cloud"
 
-c.style.top=Math.random()*28+"%"
+c.style.top=Math.random()*25+"%"
 
-c.innerHTML=`
-<svg viewBox="0 0 200 100">
+c.innerHTML=`<svg viewBox="0 0 200 100">
 <ellipse cx="60" cy="60" rx="50" ry="30" fill="white"/>
 <ellipse cx="110" cy="55" rx="45" ry="28" fill="white"/>
 <ellipse cx="150" cy="65" rx="35" ry="25" fill="white"/>
-</svg>
-`
+</svg>`
 
 document.body.appendChild(c)
 
