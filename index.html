@@ -1,458 +1,440 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Broom The Room</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lost Coin – Luke 15</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #000;
-            font-family: Georgia, serif;
-        }
+<style>
 
-        /* pointer */
+body{
+margin:0;
+overflow:hidden;
+background:#000;
+font-family:Georgia,serif;
+}
 
-        #pointer {
-            position: fixed;
-            pointer-events: none;
-            display: none;
-            z-index: 1000;
-            font-size: 32px;
-            transform: translate(-50%, -50%);
-        }
+/* broom pointer */
 
-        /* popup */
+#pointer{
+position:fixed;
+pointer-events:none;
+display:none;
+z-index:1000;
+font-size:32px;
+transform:translate(-50%,-50%);
+}
 
-        #popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #000;
-            color: #ffd700;
-            padding: 18px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 1.05rem;
-            z-index: 2000;
-            width: min(85%, 360px);
-        }
+/* popup */
 
-        /* instruction */
+#popup{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#000;
+color:#ffd700;
+padding:18px;
+border-radius:10px;
+text-align:center;
+font-size:1.05rem;
+z-index:2000;
+width:min(85%,360px);
+}
 
-        #instruction {
-            position: fixed;
-            top: 18px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: #ffd700;
-            padding: 6px 14px;
-            border-radius: 18px;
-            font-size: .9rem;
-            opacity: 0;
-            transition: .4s;
-            z-index: 1500;
-        }
+/* instruction toast */
 
-        /* verse panel */
+#instruction{
+position:fixed;
+top:18px;
+left:50%;
+transform:translateX(-50%);
+background:rgba(0,0,0,0.8);
+color:#ffd700;
+padding:6px 14px;
+border-radius:18px;
+font-size:.9rem;
+opacity:0;
+transition:.4s;
+z-index:1500;
+}
 
-        #topArea {
-            position: absolute;
-            top: 6vh;
-            left: 0;
-            width: 100%;
-            min-height: 30vh;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            text-align: center;
-            opacity: 0;
-            transition: opacity .6s;
-        }
+/* verse panel */
 
-        .verseBox {
-            max-width: 720px;
-            width: 90%;
-            font-size: clamp(1rem, 2.4vw, 1.35rem);
-            line-height: 1.6;
-        }
+#topArea{
+position:absolute;
+top:6vh;
+left:0;
+width:100%;
+min-height:30vh;
+background:white;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+text-align:center;
+opacity:0;
+transition:opacity .6s;
+}
 
-        /* floor */
+.verseBox{
+max-width:720px;
+width:90%;
+font-size:clamp(1rem,2.4vw,1.35rem);
+line-height:1.6;
+}
 
-        #floor {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 68vh;
-            background: #111;
-            display: none;
-            overflow: hidden;
-        }
+/* dusty floor */
 
-        /* dust */
+#floor{
+position:absolute;
+bottom:0;
+width:100%;
+height:68vh;
+background:#111;
+display:none;
+overflow:hidden;
+}
 
-        .dust {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: #888;
-            border-radius: 50%;
-        }
+/* dust */
 
-        /* coin */
+.dust{
+position:absolute;
+width:3px;
+height:3px;
+background:#888;
+border-radius:50%;
+}
 
-        #coin {
-            position: absolute;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #e4c463, #8c6b15);
-            opacity: 0;
-        }
+/* coin */
 
-        #coin.found {
-            opacity: 1;
-            box-shadow: 0 0 40px gold, 0 0 90px gold;
-            transform: scale(1.5);
-            transition: .4s;
-        }
+#coin{
+position:absolute;
+width:26px;
+height:26px;
+border-radius:50%;
+background:radial-gradient(circle,#e4c463,#8c6b15);
+opacity:0;
+}
 
-        /* heaven */
+#coin.found{
+opacity:1;
+box-shadow:0 0 40px gold,0 0 90px gold;
+transform:scale(1.5);
+transition:.4s;
+}
 
-        #heaven {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(#cfeeff, #ffffff);
-            opacity: 0;
-            transition: 1s;
-        }
+/* heaven */
 
-        /* clouds */
+#heaven{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:linear-gradient(#cfeeff,#ffffff);
+opacity:0;
+transition:1s;
+}
 
-        .cloud {
-            position: absolute;
-            width: 180px;
-            animation: cloudMove 16s linear infinite;
-            opacity: .9;
-        }
+/* clouds */
 
-        @keyframes cloudMove {
-            from {
-                transform: translateX(-220px)
-            }
+.cloud{
+position:absolute;
+width:180px;
+animation:cloudMove 16s linear infinite;
+opacity:.9;
+}
 
-            to {
-                transform: translateX(110vw)
-            }
-        }
+@keyframes cloudMove{
+from{transform:translateX(-220px)}
+to{transform:translateX(110vw)}
+}
 
-        /* final verse */
+/* final verse */
 
-        #bottomVerse {
-            position: absolute;
-            bottom: 16%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: min(85%, 640px);
-            text-align: center;
-            font-size: clamp(1.1rem, 2.6vw, 1.6rem);
-            font-weight: bold;
-            line-height: 1.6;
-            color: #222;
-            opacity: 0;
-            transition: .8s;
-        }
+#bottomVerse{
+position:absolute;
+bottom:16%;
+left:50%;
+transform:translateX(-50%);
+width:min(85%,640px);
+text-align:center;
+font-size:clamp(1.1rem,2.6vw,1.6rem);
+font-weight:bold;
+line-height:1.6;
+color:#222;
+opacity:0;
+transition:.8s;
+}
 
-        /* mobile */
+/* tablets */
 
-        @media (max-width:768px) {
+@media (max-width:768px){
+#floor{height:72vh;}
+#topArea{top:8vh;}
+}
 
-            #floor {
-                height: 72vh;
-            }
+/* phones */
 
-            #topArea {
-                top: 8vh;
-            }
+@media (max-width:480px){
 
-        }
+#popup{
+top:45%;
+font-size:.95rem;
+}
 
-        @media (max-width:480px) {
+.verseBox{
+font-size:1.05rem;
+}
 
-            #popup {
-                font-size: .95rem;
-            }
+#bottomVerse{
+bottom:20%;
+font-size:1.2rem;
+}
 
-            .verseBox {
-                font-size: 1.05rem;
-            }
+}
 
-            #bottomVerse {
-                bottom: 20%;
-                font-size: 1.2rem;
-            }
-
-        }
-    </style>
+</style>
 </head>
 
 <body>
 
-    <div id="pointer">🧹</div>
+<div id="pointer">🧹</div>
 
-    <div id="instruction"></div>
+<div id="instruction"></div>
 
-    <div id="popup">
-        Help a woman who lost her coin find it.<br><br>
-        <button class="btn btn-warning btn-sm" onclick="startGame()">Start</button>
-    </div>
+<div id="popup">
+Help a woman who lost her coin find it.<br><br>
+<button class="btn btn-warning btn-sm" onclick="startGame()">Start</button>
+</div>
 
-    <div id="topArea">
-        <div class="verseBox" id="foundText"></div>
-    </div>
+<div id="topArea">
+<div class="verseBox" id="foundText"></div>
+</div>
 
-    <div id="floor">
-        <div id="coin"></div>
-    </div>
+<div id="floor">
+<div id="coin"></div>
+</div>
 
-    <div id="heaven"></div>
+<div id="heaven"></div>
 
-    <div id="bottomVerse"></div>
+<div id="bottomVerse"></div>
 
-    <script>
+<script>
 
-        const pointer = document.getElementById("pointer")
-        const popup = document.getElementById("popup")
-        const floor = document.getElementById("floor")
-        const coin = document.getElementById("coin")
-        const topArea = document.getElementById("topArea")
-        const foundText = document.getElementById("foundText")
-        const heaven = document.getElementById("heaven")
-        const bottomVerse = document.getElementById("bottomVerse")
-        const instruction = document.getElementById("instruction")
+const pointer=document.getElementById("pointer")
+const popup=document.getElementById("popup")
+const floor=document.getElementById("floor")
+const coin=document.getElementById("coin")
+const topArea=document.getElementById("topArea")
+const foundText=document.getElementById("foundText")
+const heaven=document.getElementById("heaven")
+const bottomVerse=document.getElementById("bottomVerse")
+const instruction=document.getElementById("instruction")
 
-        let phase = 0
-        let found = false
+let phase=0
+let found=false
+let mouseX=0
+let mouseY=0
 
-        let mouseX = 0
-        let mouseY = 0
+const SWEEP_RADIUS = 65
+const COIN_RADIUS = 40
 
-        const SWEEP_RADIUS = 65
-        const COIN_RADIUS = 40
+function showInstruction(msg){
 
-        function showInstruction(msg) {
+instruction.innerText=msg
+instruction.style.opacity=1
 
-            instruction.innerText = msg
-            instruction.style.opacity = 1
+setTimeout(()=>{
+instruction.style.opacity=0
+},3000)
 
-            setTimeout(() => {
-                instruction.style.opacity = 0
-            }, 3000)
+}
 
-        }
+/* pointer tracking */
 
-        /* pointer tracking */
+function updatePointer(x,y){
 
-        function updatePointer(x, y) {
+mouseX=x
+mouseY=y
 
-            mouseX = x
-            mouseY = y
+if(pointer.style.display!=="none"){
+pointer.style.left=x+"px"
+pointer.style.top=y+"px"
+}
 
-            if (pointer.style.display !== "none") {
-                pointer.style.left = x + "px"
-                pointer.style.top = y + "px"
-            }
+if(phase!==1) return
 
-            if (phase !== 1) return
+sweepDust()
+detectCoin()
 
-            sweepDust()
-            detectCoin()
+}
 
-        }
+window.addEventListener("pointermove",(e)=>{
+updatePointer(e.clientX,e.clientY)
+})
 
-        /* desktop */
+window.addEventListener("touchmove",(e)=>{
+let t=e.touches[0]
+updatePointer(t.clientX,t.clientY)
+})
 
-        window.addEventListener("pointermove", (e) => {
-            updatePointer(e.clientX, e.clientY)
-        })
+function startGame(){
 
-        /* mobile */
+popup.style.display="none"
 
-        window.addEventListener("touchmove", (e) => {
+floor.style.display="block"
 
-            let t = e.touches[0]
-            updatePointer(t.clientX, t.clientY)
+document.body.style.cursor="none"
+pointer.style.display="block"
 
-        })
+generateDust()
+placeCoin()
 
-        /* start */
+showInstruction("Sweep the dusty floor to find the lost coin.")
 
-        function startGame() {
+phase=1
 
-            popup.style.display = "none"
+}
 
-            floor.style.display = "block"
+/* dust */
 
-            document.body.style.cursor = "none"
+function generateDust(){
 
-            pointer.style.display = "block"
+for(let i=0;i<220;i++){
 
-            generateDust()
-            placeCoin()
+let d=document.createElement("div")
+d.className="dust"
 
-            showInstruction("Sweep the floor to find the lost coin.")
+d.style.left=Math.random()*floor.offsetWidth+"px"
+d.style.top=Math.random()*floor.offsetHeight+"px"
 
-            phase = 1
+floor.appendChild(d)
 
-        }
+}
 
-        /* dust */
+}
 
-        function generateDust() {
+function sweepDust(){
 
-            for (let i = 0; i < 220; i++) {
+document.querySelectorAll(".dust").forEach(d=>{
 
-                let d = document.createElement("div")
-                d.className = "dust"
+let rect=d.getBoundingClientRect()
 
-                d.style.left = Math.random() * floor.offsetWidth + "px"
-                d.style.top = Math.random() * floor.offsetHeight + "px"
+let dx=rect.left-mouseX
+let dy=rect.top-mouseY
 
-                floor.appendChild(d)
+let dist=Math.sqrt(dx*dx+dy*dy)
 
-            }
+if(dist<SWEEP_RADIUS){
 
-        }
+let x=parseFloat(d.style.left)
 
-        function sweepDust() {
+if(rect.left < window.innerWidth/2)
+d.style.left=(x-14)+"px"
+else
+d.style.left=(x+14)+"px"
 
-            document.querySelectorAll(".dust").forEach(d => {
+}
 
-                let rect = d.getBoundingClientRect()
+})
 
-                let dx = rect.left - mouseX
-                let dy = rect.top - mouseY
+}
 
-                let dist = Math.sqrt(dx * dx + dy * dy)
+/* coin */
 
-                if (dist < SWEEP_RADIUS) {
+function placeCoin(){
 
-                    let x = parseFloat(d.style.left)
+const padding=30
 
-                    if (rect.left < window.innerWidth / 2)
-                        d.style.left = (x - 14) + "px"
-                    else
-                        d.style.left = (x + 14) + "px"
+let x=Math.random()*(floor.offsetWidth-padding*2)+padding
+let y=Math.random()*(floor.offsetHeight-padding*2)+padding
 
-                }
+coin.style.left=x+"px"
+coin.style.top=y+"px"
 
-            })
+}
 
-        }
+/* detection */
 
-        /* coin */
+function detectCoin(){
 
-        function placeCoin() {
+if(found) return
 
-            const padding = 30
+let c=coin.getBoundingClientRect()
 
-            let x = Math.random() * (floor.offsetWidth - padding * 2) + padding
-            let y = Math.random() * (floor.offsetHeight - padding * 2) + padding
+if(
+mouseX>c.left-COIN_RADIUS &&
+mouseX<c.right+COIN_RADIUS &&
+mouseY>c.top-COIN_RADIUS &&
+mouseY<c.bottom+COIN_RADIUS
+){
+foundCoin()
+}
 
-            coin.style.left = x + "px"
-            coin.style.top = y + "px"
+}
 
-        }
+/* found coin */
 
-        /* detection */
+function foundCoin(){
 
-        function detectCoin() {
+found=true
 
-            if (found) return
+coin.classList.add("found")
 
-            let c = coin.getBoundingClientRect()
+showInstruction("You found the lost coin!")
 
-            if (
-                mouseX > c.left - COIN_RADIUS &&
-                mouseX < c.right + COIN_RADIUS &&
-                mouseY > c.top - COIN_RADIUS &&
-                mouseY < c.bottom + COIN_RADIUS
-            ) {
-                foundCoin()
-            }
-
-        }
-
-        /* coin found */
-
-        function foundCoin() {
-
-            found = true
-
-            coin.classList.add("found")
-
-            showInstruction("You found the lost coin!")
-
-            foundText.innerHTML = `
+foundText.innerHTML=`
 <strong>Luke 15:8–9</strong><br><br>
 She gathers her friends and neighbors and celebrates:<br>
 <em>“Rejoice with me — I found my lost coin!”</em>
 `
 
-            topArea.style.opacity = 1
+topArea.style.opacity=1
 
-            setTimeout(() => {
-                heavenScene()
-            }, 5000)
+setTimeout(()=>{
+heavenScene()
+},5000)
 
-        }
+}
 
-        /* heaven */
+/* heaven */
 
-        function heavenScene() {
+function heavenScene(){
 
-            pointer.style.display = "none"
-            coin.style.display = "none"
+pointer.style.display="none"
+coin.style.display="none"
 
-            heaven.style.opacity = 1
+heaven.style.opacity=1
 
-            spawnClouds()
+spawnClouds()
 
-            setTimeout(() => {
+setTimeout(()=>{
 
-                bottomVerse.innerHTML =
-                    "In the same way, there is rejoicing in the presence of the angels of God over one sinner who repents.<br><small>Luke 15:10</small>"
+bottomVerse.innerHTML=
+"In the same way, there is rejoicing in the presence of the angels of God over one sinner who repents.<br><small>Luke 15:10</small>"
 
-                bottomVerse.style.opacity = 1
+bottomVerse.style.opacity=1
 
-            }, 1200)
+},1200)
 
-        }
+}
 
-        /* clouds */
+/* clouds */
 
-        function spawnClouds() {
+function spawnClouds(){
 
-            for (let i = 0; i < 5; i++) {
+for(let i=0;i<5;i++){
 
-                let c = document.createElement("div")
-                c.className = "cloud"
+let c=document.createElement("div")
+c.className="cloud"
 
-                c.style.top = Math.random() * 28 + "%"
+c.style.top=Math.random()*28+"%"
 
-                c.innerHTML = `
+c.innerHTML=`
 <svg viewBox="0 0 200 100">
 <ellipse cx="60" cy="60" rx="50" ry="30" fill="white"/>
 <ellipse cx="110" cy="55" rx="45" ry="28" fill="white"/>
@@ -460,14 +442,13 @@ She gathers her friends and neighbors and celebrates:<br>
 </svg>
 `
 
-                document.body.appendChild(c)
+document.body.appendChild(c)
 
-            }
+}
 
-        }
+}
 
-    </script>
+</script>
 
 </body>
-
 </html>
